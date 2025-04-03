@@ -6,23 +6,25 @@
     <title>Лягушонок ловит подарки</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { text-align: center; background: #a0e3a0; overflow: hidden; }
+        body { text-align: center; background: #a0e3a0; overflow: hidden; font-family: sans-serif; }
         canvas { background: #fff; display: block; margin: auto; border: 5px solid #333; }
         .controls { margin-top: 10px; display: flex; justify-content: center; gap: 30px; }
         button { font-size: 20px; padding: 10px; margin: 5px; }
-        .lives { font-size: 20px; margin-top: 20px; }
+        .lives {
+            font-size: 26px;
+            margin-top: 10px;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>Лягушонок ловит подарки</h1>
+    <div class="lives" id="livesDisplay">❤️❤️❤️</div>
     <button id="startGame">Старт</button>
     <canvas id="gameCanvas" width="400" height="500"></canvas>
     <div class="controls">
         <button id="left">⬅️</button>
         <button id="right">➡️</button>
-    </div>
-    <div class="lives">
-        <p>Жизни: <span id="livesCount">3</span></p>
     </div>
 
     <script>
@@ -33,58 +35,59 @@
         const frogY = 400;
         const gifts = [];
         const giftSpeed = 2;
-        const giftPositions = [50, 100, 150, 200, 250, 300, 350]; // 7 позиций для подарков
+        const giftPositions = [50, 100, 150, 200, 250, 300, 350];
         let lives = 3;
+        let giftInMotion = false;
 
-        // Убираем кнопку старта при ее нажатии
         document.getElementById("startGame").addEventListener("click", () => {
             gameRunning = true;
-            document.getElementById("startGame").style.display = 'none'; // Прячем кнопку старт
+            document.getElementById("startGame").style.display = 'none';
             spawnGift();
         });
 
-        // Перемещаем лягушонка по стрелочкам
         document.getElementById("left").addEventListener("click", () => { if (frogX > 50) frogX -= 50; });
         document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
 
-        // Рисуем лягушонка
         function drawFrog() {
             ctx.fillStyle = "green";
             ctx.fillRect(frogX, frogY, 50, 50);
         }
 
-        // Спавним подарки
         function spawnGift() {
             setInterval(() => {
-                if (gameRunning) {
+                if (gameRunning && !giftInMotion) {
                     const randomPosition = giftPositions[Math.floor(Math.random() * giftPositions.length)];
                     gifts.push({ x: randomPosition, y: 0 });
+                    giftInMotion = true;
                 }
             }, 2000);
         }
 
-        // Рисуем подарки
         function drawGifts() {
             ctx.fillStyle = "red";
             gifts.forEach((g, index) => {
                 ctx.fillRect(g.x, g.y, 30, 30);
                 g.y += giftSpeed;
 
-                // Если подарок падает ниже экрана, проверяем столкновение с лягушонком
                 if (g.y > frogY && g.y < frogY + 50 && Math.abs(g.x - frogX) < 30) {
-                    gifts.splice(index, 1); // Убираем подарок, если лягушонок поймал
-                } else if (g.y > canvas.height) {
-                    // Если подарок упал на землю, теряем жизнь
                     gifts.splice(index, 1);
+                    giftInMotion = false;
+                } else if (g.y > canvas.height) {
+                    gifts.splice(index, 1);
+                    giftInMotion = false;
                     loseLife();
                 }
             });
         }
 
-        // Уменьшаем количество жизней
+        function updateLivesDisplay() {
+            const display = document.getElementById("livesDisplay");
+            display.innerText = "❤️".repeat(lives);
+        }
+
         function loseLife() {
             lives--;
-            document.getElementById("livesCount").innerText = lives;
+            updateLivesDisplay();
             if (lives <= 0) {
                 gameRunning = false;
                 alert("Игра окончена! Вы проиграли.");
@@ -92,17 +95,16 @@
             }
         }
 
-        // Сбрасываем игру
         function resetGame() {
             frogX = 180;
             lives = 3;
-            document.getElementById("livesCount").innerText = lives;
+            updateLivesDisplay();
             gifts.length = 0;
+            giftInMotion = false;
             gameRunning = false;
-            document.getElementById("startGame").style.display = 'block'; // Показываем кнопку старт
+            document.getElementById("startGame").style.display = 'block';
         }
 
-        // Игровой цикл
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (gameRunning) {
@@ -112,6 +114,7 @@
             requestAnimationFrame(gameLoop);
         }
 
+        updateLivesDisplay();
         gameLoop();
     </script>
 </body>
