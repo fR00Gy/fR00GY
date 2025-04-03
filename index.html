@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Лови подарки</title>
+    <title>Лягушонок ловит подарки</title>
     <style>
         html, body {
             margin: 0;
@@ -93,7 +93,7 @@
         const gifts = [];
         const giftSpeedBase = 2;
         let giftSpeed = giftSpeedBase;
-        const giftPositions = [50, 100, 150, 200, 250, 300, 350];
+        const giftPositions = [0, 50, 100, 150, 200, 250, 300, 350];
         let lives = 3;
         let score = 0;
         let spawnCounter = 0;
@@ -122,8 +122,13 @@
             startSpawning();
         });
 
-        document.getElementById("left").addEventListener("click", () => { if (frogX > 0) frogX -= 50; });
-        document.getElementById("right").addEventListener("click", () => { if (frogX < canvas.width - frogWidth) frogX += 50; });
+        document.getElementById("left").addEventListener("click", () => {
+            if (frogX - 50 >= 0) frogX -= 50;
+        });
+
+        document.getElementById("right").addEventListener("click", () => {
+            if (frogX + 50 + frogWidth <= canvas.width) frogX += 50;
+        });
 
         function drawFrog() {
             ctx.drawImage(frogImg, frogX, frogY, frogWidth, frogHeight);
