@@ -5,26 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Лягушонок ловит подарки</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            text-align: center;
-            background: url('https://i.imgur.com/4hoqU0E.png') no-repeat center center fixed;
-            background-size: cover;
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
             font-family: sans-serif;
+            background: url('https://i.imgur.com/4hoqU0E.png') no-repeat center center fixed;
+            background-size: cover;
             touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        h1 {
+            margin-top: 10px;
+            font-size: 24px;
+            color: #fff;
         }
         canvas {
             background: rgba(255, 255, 255, 0.8);
-            display: block;
-            margin: auto;
             border: 5px solid #333;
+            width: 95vw;
+            height: auto;
+            max-width: 400px;
         }
         .controls {
             margin-top: 10px;
             display: flex;
             justify-content: space-around;
-            padding: 0 50px;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 30px;
         }
         .controls img {
             width: 60px;
@@ -41,18 +55,15 @@
             height: 30px;
         }
         #startGame {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin-top: 15px;
             padding: 15px 40px;
-            font-size: 24px;
+            font-size: 20px;
             z-index: 10;
         }
         #scoreDisplay {
-            font-size: 22px;
+            font-size: 20px;
             color: #fff;
-            margin-top: 10px;
+            margin-top: 5px;
         }
     </style>
 </head>
