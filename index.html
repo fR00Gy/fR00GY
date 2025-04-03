@@ -4,10 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лягушонок ловит подарки</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { text-align: center; background: #a0e3a0; overflow: hidden; }
+        canvas { background: #fff; display: block; margin: auto; border: 5px solid #333; }
+        .controls { margin-top: 10px; }
+        button { font-size: 20px; padding: 10px; margin: 5px; }
+    </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <script src="game.js"></script>
+    <h1>Лягушонок ловит подарки</h1>
+    <button id="startGame">Старт</button>
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <div class="controls">
+        <button id="left">⬅️</button>
+        <button id="right">➡️</button>
+    </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        let gameRunning = false;
+        let frogX = 180;
+        const frogY = 400;
+        const gifts = [];
+        const giftSpeed = 2;
+
+        document.getElementById("startGame").addEventListener("click", () => {
+            gameRunning = true;
+            spawnGift();
+        });
+
+        document.getElementById("left").addEventListener("click", () => { if (frogX > 50) frogX -= 50; });
+        document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
+
+        function drawFrog() {
+            ctx.fillStyle = "green";
+            ctx.fillRect(frogX, frogY, 50, 50);
+        }
+
+        function spawnGift() {
+            setInterval(() => {
+                if (gameRunning) {
+                    gifts.push({ x: Math.random() * 350, y: 0 });
+                }
+            }, 2000);
+        }
+
+        function drawGifts() {
+            ctx.fillStyle = "red";
+            gifts.forEach(g => {
+                ctx.fillRect(g.x, g.y, 30, 30);
+                g.y += giftSpeed;
+            });
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (gameRunning) {
+                drawFrog();
+                drawGifts();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+        gameLoop();
+    </script>
 </body>
 </html>
