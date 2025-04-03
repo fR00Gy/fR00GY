@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Лягушонок ловит подарки</title>
+    <title>Лови подарки</title>
     <style>
         html, body {
             margin: 0;
@@ -28,17 +28,19 @@
         canvas {
             background: rgba(255, 255, 255, 0.8);
             border: 5px solid #333;
-            width: 95vw;
-            height: auto;
+            width: 100vw;
             max-width: 400px;
+            height: calc(100vh - 250px);
         }
         .controls {
-            margin-top: 10px;
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            right: 0;
             display: flex;
-            justify-content: space-around;
-            width: 100%;
-            max-width: 400px;
+            justify-content: space-between;
             padding: 0 30px;
+            z-index: 5;
         }
         .controls img {
             width: 60px;
@@ -72,7 +74,7 @@
     <div class="lives" id="livesDisplay"></div>
     <div id="scoreDisplay">Очки: 0</div>
     <button id="startGame">Старт</button>
-    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <canvas id="gameCanvas"></canvas>
     <div class="controls">
         <img src="https://i.imgur.com/QUaEIk9.png" id="left" alt="Лево">
         <img src="https://i.imgur.com/05AB2sm.png" id="right" alt="Право">
@@ -80,6 +82,8 @@
 
     <script>
         const canvas = document.getElementById("gameCanvas");
+        canvas.width = 400;
+        canvas.height = 500;
         const ctx = canvas.getContext("2d");
         let gameRunning = false;
         let frogX = 155;
