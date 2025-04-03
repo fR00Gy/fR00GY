@@ -107,8 +107,8 @@
             startSpawning();
         });
 
-        document.getElementById("left").addEventListener("click", () => { if (frogX > 50) frogX -= 50; });
-        document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
+        document.getElementById("left").addEventListener("click", () => { if (frogX > 0) frogX -= 50; });
+        document.getElementById("right").addEventListener("click", () => { if (frogX < canvas.width - frogWidth) frogX += 50; });
 
         function drawFrog() {
             ctx.drawImage(frogImg, frogX, frogY, frogWidth, frogHeight);
@@ -144,7 +144,14 @@
                 }
                 g.y += giftSpeed;
 
-                if (g.y > frogY && g.y < frogY + frogHeight && Math.abs(g.x - frogX) < 30) {
+                const frogCenter = frogX + frogWidth / 2;
+                const giftCenter = g.x + 15;
+
+                if (
+                    g.y + 30 > frogY &&
+                    g.y < frogY + frogHeight &&
+                    Math.abs(frogCenter - giftCenter) < (frogWidth / 2 + 15)
+                ) {
                     if (g.bad) {
                         loseLife();
                     } else {
