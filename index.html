@@ -2,14 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Лягушонок ловит подарки</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { text-align: center; background: #a0e3a0; overflow: hidden; font-family: sans-serif; }
+        body { text-align: center; background: #a0e3a0; overflow: hidden; font-family: sans-serif; touch-action: manipulation; }
         canvas { background: #fff; display: block; margin: auto; border: 5px solid #333; }
-        .controls { margin-top: 10px; display: flex; justify-content: center; gap: 30px; }
-        button { font-size: 20px; padding: 10px; margin: 5px; }
+        .controls { margin-top: 10px; display: flex; justify-content: space-around; padding: 0 50px; }
+        button { font-size: 24px; padding: 15px 30px; margin: 5px; }
         .lives {
             font-size: 26px;
             margin-top: 10px;
@@ -34,10 +34,13 @@
         let frogX = 180;
         const frogY = 400;
         const gifts = [];
-        const giftSpeed = 2;
+        const giftSpeedBase = 2;
+        let giftSpeed = giftSpeedBase;
         const giftPositions = [50, 100, 150, 200, 250, 300, 350];
         let lives = 3;
         let giftInMotion = false;
+        let spawnCounter = 0;
+        const badGiftProbability = 0.3; // 30% шанс на "плохой" подарок
 
         document.getElementById("startGame").addEventListener("click", () => {
             gameRunning = true;
@@ -57,25 +60,34 @@
             setInterval(() => {
                 if (gameRunning && !giftInMotion) {
                     const randomPosition = giftPositions[Math.floor(Math.random() * giftPositions.length)];
-                    gifts.push({ x: randomPosition, y: 0 });
+                    const isBad = Math.random() < badGiftProbability;
+                    gifts.push({ x: randomPosition, y: 0, bad: isBad });
                     giftInMotion = true;
+
+                    spawnCounter++;
+                    if (spawnCounter % 5 === 0) {
+                        giftSpeed += 0.3; // ускоряем падение каждые 5 объектов
+                    }
                 }
             }, 2000);
         }
 
         function drawGifts() {
-            ctx.fillStyle = "red";
             gifts.forEach((g, index) => {
+                ctx.fillStyle = g.bad ? "black" : "red";
                 ctx.fillRect(g.x, g.y, 30, 30);
                 g.y += giftSpeed;
 
                 if (g.y > frogY && g.y < frogY + 50 && Math.abs(g.x - frogX) < 30) {
+                    if (g.bad) {
+                        loseLife();
+                    }
                     gifts.splice(index, 1);
                     giftInMotion = false;
                 } else if (g.y > canvas.height) {
                     gifts.splice(index, 1);
                     giftInMotion = false;
-                    loseLife();
+                    if (!g.bad) loseLife();
                 }
             });
         }
@@ -98,6 +110,8 @@
         function resetGame() {
             frogX = 180;
             lives = 3;
+            giftSpeed = giftSpeedBase;
+            spawnCounter = 0;
             updateLivesDisplay();
             gifts.length = 0;
             giftInMotion = false;
@@ -119,3 +133,4 @@
     </script>
 </body>
 </html>
+
