@@ -56,8 +56,9 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         let gameRunning = false;
-        let frogX = 180;
+        let frogX = 175;
         const frogY = 400;
+        const frogSize = 60;
         const gifts = [];
         const giftSpeedBase = 2;
         let giftSpeed = giftSpeedBase;
@@ -73,10 +74,10 @@
         frogImg.src = "https://i.imgur.com/xhHsuil.png";
 
         const giftImg = new Image();
-        giftImg.src = "https://i.imgur.com/ow3vnRP.jpeg";
+        giftImg.src = "https://i.imgur.com/KvLJceM.png";
 
         const badGiftImg = new Image();
-        badGiftImg.src = "https://i.imgur.com/wcqte5g.png";
+        badGiftImg.src = "https://i.imgur.com/Z7RXVbr.png";
 
         const heartImg = "https://i.imgur.com/znfQ4N2.png";
 
@@ -90,7 +91,7 @@
         document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
 
         function drawFrog() {
-            ctx.drawImage(frogImg, frogX, frogY, 50, 50);
+            ctx.drawImage(frogImg, frogX, frogY, frogSize, frogSize);
         }
 
         function spawnGift() {
@@ -121,7 +122,7 @@
                 ctx.drawImage(img, g.x, g.y, 30, 30);
                 g.y += giftSpeed;
 
-                if (g.y > frogY && g.y < frogY + 50 && Math.abs(g.x - frogX) < 30) {
+                if (g.y > frogY && g.y < frogY + frogSize && Math.abs(g.x - frogX) < 30) {
                     if (g.bad) {
                         loseLife();
                     }
@@ -155,7 +156,7 @@
         }
 
         function resetGame() {
-            frogX = 180;
+            frogX = 175;
             lives = 3;
             giftSpeed = giftSpeedBase;
             spawnInterval = 2000;
