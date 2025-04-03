@@ -10,6 +10,8 @@
         canvas { background: #fff; display: block; margin: auto; border: 5px solid #333; }
         .controls { margin-top: 10px; }
         button { font-size: 20px; padding: 10px; margin: 5px; }
+        .pillars { display: flex; justify-content: center; margin-top: 20px; }
+        .pillar-button { margin: 0 15px; font-size: 16px; padding: 10px 20px; }
     </style>
 </head>
 <body>
@@ -20,6 +22,13 @@
         <button id="left">⬅️</button>
         <button id="right">➡️</button>
     </div>
+    <div class="pillars">
+        <button id="pillar1" class="pillar-button">Палка 1</button>
+        <button id="pillar2" class="pillar-button">Палка 2</button>
+        <button id="pillar3" class="pillar-button">Палка 3</button>
+        <button id="pillar4" class="pillar-button">Палка 4</button>
+    </div>
+
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -28,20 +37,32 @@
         const frogY = 400;
         const gifts = [];
         const giftSpeed = 2;
+        const pillarPositions = [50, 150, 250, 350]; // Позиции палок
 
+        // Убираем кнопку старта при ее нажатии
         document.getElementById("startGame").addEventListener("click", () => {
             gameRunning = true;
+            document.getElementById("startGame").style.display = 'none'; // Прячем кнопку старт
             spawnGift();
         });
 
+        // Перемещаем лягушонка по стрелочкам
         document.getElementById("left").addEventListener("click", () => { if (frogX > 50) frogX -= 50; });
         document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
 
+        // Добавляем обработчики для кнопок палок
+        document.getElementById("pillar1").addEventListener("click", () => { frogX = pillarPositions[0]; });
+        document.getElementById("pillar2").addEventListener("click", () => { frogX = pillarPositions[1]; });
+        document.getElementById("pillar3").addEventListener("click", () => { frogX = pillarPositions[2]; });
+        document.getElementById("pillar4").addEventListener("click", () => { frogX = pillarPositions[3]; });
+
+        // Рисуем лягушонка
         function drawFrog() {
             ctx.fillStyle = "green";
             ctx.fillRect(frogX, frogY, 50, 50);
         }
 
+        // Спавним подарки
         function spawnGift() {
             setInterval(() => {
                 if (gameRunning) {
@@ -50,6 +71,7 @@
             }, 2000);
         }
 
+        // Рисуем подарки
         function drawGifts() {
             ctx.fillStyle = "red";
             gifts.forEach(g => {
@@ -58,6 +80,7 @@
             });
         }
 
+        // Игровой цикл
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (gameRunning) {
@@ -66,6 +89,7 @@
             }
             requestAnimationFrame(gameLoop);
         }
+
         gameLoop();
     </script>
 </body>
