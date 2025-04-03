@@ -38,14 +38,16 @@
         let giftSpeed = giftSpeedBase;
         const giftPositions = [50, 100, 150, 200, 250, 300, 350];
         let lives = 3;
-        let giftInMotion = false;
         let spawnCounter = 0;
+        let spawnInterval = 2000;
         const badGiftProbability = 0.3; // 30% шанс на "плохой" подарок
+
+        let spawnTimer;
 
         document.getElementById("startGame").addEventListener("click", () => {
             gameRunning = true;
             document.getElementById("startGame").style.display = 'none';
-            spawnGift();
+            startSpawning();
         });
 
         document.getElementById("left").addEventListener("click", () => { if (frogX > 50) frogX -= 50; });
@@ -57,19 +59,25 @@
         }
 
         function spawnGift() {
-            setInterval(() => {
-                if (gameRunning && !giftInMotion) {
-                    const randomPosition = giftPositions[Math.floor(Math.random() * giftPositions.length)];
-                    const isBad = Math.random() < badGiftProbability;
-                    gifts.push({ x: randomPosition, y: 0, bad: isBad });
-                    giftInMotion = true;
+            const randomPosition = giftPositions[Math.floor(Math.random() * giftPositions.length)];
+            const isBad = Math.random() < badGiftProbability;
+            gifts.push({ x: randomPosition, y: 0, bad: isBad });
+        }
 
+        function startSpawning() {
+            spawnTimer = setInterval(() => {
+                if (gameRunning) {
+                    spawnGift();
                     spawnCounter++;
+
                     if (spawnCounter % 5 === 0) {
-                        giftSpeed += 0.3; // ускоряем падение каждые 5 объектов
+                        giftSpeed += 0.3; // ускорение падения
+                        spawnInterval = Math.max(500, spawnInterval - 200); // уменьшаем интервал, минимум 500мс
+                        clearInterval(spawnTimer);
+                        startSpawning();
                     }
                 }
-            }, 2000);
+            }, spawnInterval);
         }
 
         function drawGifts() {
@@ -83,10 +91,8 @@
                         loseLife();
                     }
                     gifts.splice(index, 1);
-                    giftInMotion = false;
                 } else if (g.y > canvas.height) {
                     gifts.splice(index, 1);
-                    giftInMotion = false;
                     if (!g.bad) loseLife();
                 }
             });
@@ -102,6 +108,7 @@
             updateLivesDisplay();
             if (lives <= 0) {
                 gameRunning = false;
+                clearInterval(spawnTimer);
                 alert("Игра окончена! Вы проиграли.");
                 resetGame();
             }
@@ -111,10 +118,11 @@
             frogX = 180;
             lives = 3;
             giftSpeed = giftSpeedBase;
+            spawnInterval = 2000;
             spawnCounter = 0;
             updateLivesDisplay();
             gifts.length = 0;
-            giftInMotion = false;
+            clearInterval(spawnTimer);
             gameRunning = false;
             document.getElementById("startGame").style.display = 'block';
         }
@@ -133,4 +141,3 @@
     </script>
 </body>
 </html>
-
