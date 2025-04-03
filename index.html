@@ -6,25 +6,50 @@
     <title>Лягушонок ловит подарки</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { text-align: center; background: #a0e3a0; overflow: hidden; font-family: sans-serif; touch-action: manipulation; }
-        canvas { background: #fff; display: block; margin: auto; border: 5px solid #333; }
-        .controls { margin-top: 10px; display: flex; justify-content: space-around; padding: 0 50px; }
-        button { font-size: 24px; padding: 15px 30px; margin: 5px; }
-        .lives {
-            font-size: 26px;
+        body {
+            text-align: center;
+            background: url('https://i.imgur.com/4hoqU0E.png') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            font-family: sans-serif;
+            touch-action: manipulation;
+        }
+        canvas {
+            background: rgba(255, 255, 255, 0.8);
+            display: block;
+            margin: auto;
+            border: 5px solid #333;
+        }
+        .controls {
             margin-top: 10px;
-            color: red;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 50px;
+        }
+        .controls img {
+            width: 60px;
+            height: 60px;
+        }
+        .lives {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .lives img {
+            width: 30px;
+            height: 30px;
         }
     </style>
 </head>
 <body>
     <h1>Лягушонок ловит подарки</h1>
-    <div class="lives" id="livesDisplay">❤️❤️❤️</div>
+    <div class="lives" id="livesDisplay"></div>
     <button id="startGame">Старт</button>
     <canvas id="gameCanvas" width="400" height="500"></canvas>
     <div class="controls">
-        <button id="left">⬅️</button>
-        <button id="right">➡️</button>
+        <img src="https://i.imgur.com/QUaEIk9.png" id="left" alt="Лево">
+        <img src="https://i.imgur.com/05AB2sm.png" id="right" alt="Право">
     </div>
 
     <script>
@@ -40,9 +65,20 @@
         let lives = 3;
         let spawnCounter = 0;
         let spawnInterval = 2000;
-        const badGiftProbability = 0.3; // 30% шанс на "плохой" подарок
+        const badGiftProbability = 0.3;
 
         let spawnTimer;
+
+        const frogImg = new Image();
+        frogImg.src = "https://i.imgur.com/xhHsuil.png";
+
+        const giftImg = new Image();
+        giftImg.src = "https://i.imgur.com/ow3vnRP.jpeg";
+
+        const badGiftImg = new Image();
+        badGiftImg.src = "https://i.imgur.com/wcqte5g.png";
+
+        const heartImg = "https://i.imgur.com/znfQ4N2.png";
 
         document.getElementById("startGame").addEventListener("click", () => {
             gameRunning = true;
@@ -54,8 +90,7 @@
         document.getElementById("right").addEventListener("click", () => { if (frogX < 300) frogX += 50; });
 
         function drawFrog() {
-            ctx.fillStyle = "green";
-            ctx.fillRect(frogX, frogY, 50, 50);
+            ctx.drawImage(frogImg, frogX, frogY, 50, 50);
         }
 
         function spawnGift() {
@@ -71,8 +106,8 @@
                     spawnCounter++;
 
                     if (spawnCounter % 5 === 0) {
-                        giftSpeed += 0.3; // ускорение падения
-                        spawnInterval = Math.max(500, spawnInterval - 200); // уменьшаем интервал, минимум 500мс
+                        giftSpeed += 0.3;
+                        spawnInterval = Math.max(500, spawnInterval - 200);
                         clearInterval(spawnTimer);
                         startSpawning();
                     }
@@ -82,8 +117,8 @@
 
         function drawGifts() {
             gifts.forEach((g, index) => {
-                ctx.fillStyle = g.bad ? "black" : "red";
-                ctx.fillRect(g.x, g.y, 30, 30);
+                const img = g.bad ? badGiftImg : giftImg;
+                ctx.drawImage(img, g.x, g.y, 30, 30);
                 g.y += giftSpeed;
 
                 if (g.y > frogY && g.y < frogY + 50 && Math.abs(g.x - frogX) < 30) {
@@ -100,7 +135,12 @@
 
         function updateLivesDisplay() {
             const display = document.getElementById("livesDisplay");
-            display.innerText = "❤️".repeat(lives);
+            display.innerHTML = '';
+            for (let i = 0; i < lives; i++) {
+                const img = document.createElement("img");
+                img.src = heartImg;
+                display.appendChild(img);
+            }
         }
 
         function loseLife() {
