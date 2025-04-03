@@ -92,23 +92,6 @@
     }
   }
 
-  async function fetchTopPlayers() {
-    try {
-      const response = await fetch("http://localhost:8080/top"); // ← если ты хостишь на сервере — поменяй
-      const top = await response.json();
-
-      let text = "🏆 ТОП игроков:\n\n";
-      top.forEach((player, index) => {
-        text += `${index + 1}. ${player.username} — ${player.score} очков\n`;
-      });
-
-      alert(text); // или вставим в HTML ниже
-    } catch (err) {
-      alert("Ошибка загрузки ТОПа 😢");
-      console.error("fetchTopPlayers error:", err);
-    }
-  }
-
   const canvas = document.getElementById("gameCanvas");
   canvas.width = 400;
   canvas.height = 500;
@@ -137,17 +120,6 @@
   const badGiftImg = new Image();
   badGiftImg.src = "https://i.imgur.com/Z7RXVbr.png";
   const heartImg = "https://i.imgur.com/znfQ4N2.png";
-
-  const topBtn = document.createElement("button");
-  topBtn.innerText = "🏆 ТОП игроков";
-  topBtn.style.position = "fixed";
-  topBtn.style.top = "10px";
-  topBtn.style.right = "10px";
-  topBtn.style.padding = "10px 15px";
-  topBtn.style.fontSize = "16px";
-  topBtn.style.zIndex = "999";
-  document.body.appendChild(topBtn);
-  topBtn.addEventListener("click", fetchTopPlayers);
 
   document.getElementById("startGame").addEventListener("click", () => {
     gameRunning = true;
