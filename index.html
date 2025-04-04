@@ -20,11 +20,7 @@
       align-items: center;
       justify-content: flex-start;
     }
-    h1 {
-      margin-top: 10px;
-      font-size: 24px;
-      color: #fff;
-    }
+    h1 { margin-top: 10px; font-size: 24px; color: #fff; }
     canvas {
       background: rgba(255, 255, 255, 0.8);
       border: 5px solid #333;
@@ -42,20 +38,14 @@
       padding: 0 30px;
       z-index: 5;
     }
-    .controls img {
-      width: 60px;
-      height: 60px;
-    }
+    .controls img { width: 60px; height: 60px; }
     .lives {
       display: flex;
       justify-content: center;
       gap: 5px;
       margin-top: 10px;
     }
-    .lives img {
-      width: 30px;
-      height: 30px;
-    }
+    .lives img { width: 30px; height: 30px; }
     #startGame {
       margin-top: 15px;
       padding: 15px 40px;
@@ -87,6 +77,8 @@
   }
 
   function sendScoreToTelegram(score) {
+    console.log("🛰️ Отправка счёта:", score);
+    alert("Отправка счёта в Telegram: " + score);
     if (window.Telegram && Telegram.WebApp) {
       Telegram.WebApp.sendData(JSON.stringify({ score }));
     }
@@ -113,12 +105,9 @@
   let flash = false;
   let spawnTimer;
 
-  const frogImg = new Image();
-  frogImg.src = "https://i.imgur.com/eLpERcH.png";
-  const giftImg = new Image();
-  giftImg.src = "https://i.imgur.com/KvLJceM.png";
-  const badGiftImg = new Image();
-  badGiftImg.src = "https://i.imgur.com/Z7RXVbr.png";
+  const frogImg = new Image(); frogImg.src = "https://i.imgur.com/eLpERcH.png";
+  const giftImg = new Image(); giftImg.src = "https://i.imgur.com/KvLJceM.png";
+  const badGiftImg = new Image(); badGiftImg.src = "https://i.imgur.com/Z7RXVbr.png";
   const heartImg = "https://i.imgur.com/znfQ4N2.png";
 
   document.getElementById("startGame").addEventListener("click", () => {
@@ -152,7 +141,6 @@
       if (gameRunning) {
         spawnGift();
         spawnCounter++;
-
         if (spawnCounter % 5 === 0) {
           giftSpeed += 0.3;
           spawnInterval = Math.max(500, spawnInterval - 200);
@@ -213,13 +201,15 @@
     if (lives <= 0) {
       gameRunning = false;
       clearInterval(spawnTimer);
-      sendScoreToTelegram(score);
+      sendScoreToTelegram(score); // 🔥 вызывается здесь
       alert("Игра окончена! Вы проиграли.\nВаш счёт: " + score);
       resetGame();
     }
   }
 
   function resetGame() {
+    // можно вызвать снова, чтобы продублировать
+    // sendScoreToTelegram(score);
     frogX = 155;
     lives = 3;
     score = 0;
@@ -243,9 +233,7 @@
     requestAnimationFrame(gameLoop);
   }
 
-  setInterval(() => {
-    flash = !flash;
-  }, 300);
+  setInterval(() => { flash = !flash; }, 300);
 
   updateLivesDisplay();
   updateScoreDisplay();
