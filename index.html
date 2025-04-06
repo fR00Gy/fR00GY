@@ -30,7 +30,7 @@
       border: 5px solid #333;
       width: 100vw;
       max-width: 400px;
-      height: calc(100vh - 250px);
+      height: calc(100vh - 300px);
     }
     .controls {
       position: fixed;
@@ -56,7 +56,7 @@
       width: 30px;
       height: 30px;
     }
-    #startGame {
+    #startGame, #endGame {
       margin-top: 15px;
       padding: 15px 40px;
       font-size: 20px;
@@ -74,6 +74,7 @@
   <div class="lives" id="livesDisplay"></div>
   <div id="scoreDisplay">Очки: 0</div>
   <button id="startGame">Старт</button>
+  <button id="endGame">Завершить игру</button>
   <canvas id="gameCanvas"></canvas>
   <div class="controls">
     <img src="https://i.imgur.com/QUaEIk9.png" id="left" alt="Лево" />
@@ -88,7 +89,10 @@
 
   function sendScoreToTelegram(score) {
     if (window.Telegram && Telegram.WebApp) {
+      console.log("📤 Отправка очков в Telegram:", score);
       Telegram.WebApp.sendData(JSON.stringify({ score }));
+    } else {
+      console.log("⚠️ Telegram WebApp API недоступен");
     }
   }
 
@@ -125,6 +129,15 @@
     updateScoreDisplay();
     document.getElementById("startGame").style.display = 'none';
     startSpawning();
+  });
+
+  document.getElementById("endGame").addEventListener("click", () => {
+    if (gameRunning) {
+      gameRunning = false;
+      sendScoreToTelegram(score);
+      alert("Вы завершили игру!\nВаш счёт: " + score);
+      resetGame();
+    }
   });
 
   document.getElementById("left").addEventListener("click", () => {
@@ -248,4 +261,3 @@
 </script>
 </body>
 </html>
-
