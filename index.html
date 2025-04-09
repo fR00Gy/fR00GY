@@ -116,7 +116,7 @@
   }
 
   function updateScoreDisplay() {
-    document.getElementById("scoreDisplay").innerText = Очки: ${score};
+    document.getElementById("scoreDisplay").innerText = `Очки: ${score}`;
   }
 
   function loseLife() {
@@ -153,11 +153,11 @@
   gameLoop();
 
   async function saveScoreToSupabase(score) {
-    await fetch(${SUPABASE_URL}/rest/v1/scores, {
+    await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
-        'Authorization': Bearer ${SUPABASE_KEY},
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
@@ -167,8 +167,8 @@
   }
 
   async function fetchLeaderboardFromSupabase() {
-    const res = await fetch(${SUPABASE_URL}/rest/v1/scores?select=username,score&order=score.desc&limit=10, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': Bearer ${SUPABASE_KEY} }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/scores?select=username,score&order=score.desc&limit=10`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
     const data = await res.json();
     renderLeaderboard(data);
@@ -181,8 +181,8 @@
     const container = document.getElementById("leaderboard");
     container.innerHTML = '<h3>Топ игроков</h3>';
     const table = document.createElement("table");
-    table.innerHTML = <tr><th>Имя</th><th>Очки</th></tr> +
-      data.map(row => <tr><td>${row.username}</td><td>${row.score}</td></tr>).join('');
+    table.innerHTML = `<tr><th>Имя</th><th>Очки</th></tr>` +
+      data.map(row => `<tr><td>${row.username}</td><td>${row.score}</td></tr>`).join('');
     container.appendChild(table);
   }
 </script>
