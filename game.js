@@ -5,6 +5,11 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let user = { id: "anonymous", name: "Гость" };
 if (window.Telegram && Telegram.WebApp) {
     Telegram.WebApp.ready();
+    const initData = Telegram.WebApp.initData;
+const initDataUnsafe = Telegram.WebApp.initDataUnsafe;
+
+console.log("initData string:", initData);
+console.log("initDataUnsafe object:", initDataUnsafe);
     Telegram.WebApp.expand();
     const tg = Telegram.WebApp.initDataUnsafe;
     user = {
