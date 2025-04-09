@@ -23,12 +23,20 @@
     #leaderboard table { color: white; background: rgba(0,0,0,0.5); border-collapse: collapse; width: 100%; max-width: 400px; }
     #leaderboard th, #leaderboard td { padding: 5px 10px; border: 1px solid #ccc; text-align: left; }
     button { padding: 10px 20px; font-size: 18px; margin: 5px; }
+    #register input { padding: 10px; font-size: 16px; }
   </style>
 </head>
 <body>
   <h1>Лягушонок ловит подарки</h1>
-<div id="debug" style="background: white; color: black; padding: 10px; font-size: 14px;"></div>
-  <div id="menu">
+
+  <div id="register">
+    <p style="color:white;">Введите свой ник:</p>
+    <input id="nickname" placeholder="Ваш ник" />
+    <br/>
+    <button onclick="saveNickname()">Продолжить</button>
+  </div>
+
+  <div id="menu" style="display:none;">
     <button onclick="startGame()">Играть</button>
     <button onclick="fetchLeaderboardFromSupabase()">Топ игроков</button>
   </div>
@@ -54,6 +62,18 @@
       id: tg?.user?.id?.toString() || "anonymous",
       name: tg?.user?.first_name || "Гость"
     };
+  }
+
+  function saveNickname() {
+    const input = document.getElementById("nickname");
+    const nickname = input.value.trim();
+    if (nickname.length < 2) {
+      alert("Введите ник (минимум 2 символа)");
+      return;
+    }
+    user.name = nickname;
+    document.getElementById("register").style.display = "none";
+    document.getElementById("menu").style.display = "block";
   }
 
   const canvas = document.getElementById("gameCanvas");
