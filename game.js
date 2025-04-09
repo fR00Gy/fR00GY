@@ -64,3 +64,47 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 gameLoop();
+// Получение имени игрока
+let user = { id: "anonymous", name: "Гость" };
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+  const tg = Telegram.WebApp.initDataUnsafe;
+  user = {
+    id: tg?.user?.id?.toString() || "anonymous",
+    name: tg?.user?.first_name || "Гость"
+  };
+}
+
+// Сохраняем результат в Supabase
+async function saveScoreToSupabase(score) {
+  await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ user_id: user.id, username: user.name, score })
+  });
+  fetchLeaderboardFromSupabase();  // Обновляем лидерборд после сохранения
+}
+
+// Отображение Топа игроков
+async function fetchLeaderboardFromSupabase() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/scores?select=username,score&order=score.desc&limit=10`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  const data = await res.json();
+  renderLeaderboard(data);
+}
+
+function renderLeaderboard(data) {
+  const container = document.getElementById("leaderboard");
+  container.innerHTML = '<h3>Топ игроков</h3>';
+  const table = document.createElement("table");
+  table.innerHTML = `<tr><th>Имя</th><th>Очки</th></tr>` +
+    data.map(row => `<tr><td>${row.username}</td><td>${row.score}</td></tr>`).join('');
+  container.appendChild(table);
+}
