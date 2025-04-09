@@ -17,19 +17,25 @@
       border: 5px solid #333; width: 100vw; max-width: 400px;
       height: calc(100vh - 300px);
     }
-    .controls { position: fixed; bottom: 10px; display: flex; justify-content: space-between; width: 300px; }
+    .controls { display: flex; justify-content: space-between; width: 300px; margin-top: 10px; }
     .controls img { width: 60px; height: 60px; }
-    #leaderboard { color: #fff; margin-top: 10px; }
+    #leaderboard, #menu { color: #fff; margin-top: 10px; text-align: center; }
     #leaderboard table { color: white; background: rgba(0,0,0,0.5); border-collapse: collapse; width: 100%; max-width: 400px; }
     #leaderboard th, #leaderboard td { padding: 5px 10px; border: 1px solid #ccc; text-align: left; }
+    button { padding: 10px 20px; font-size: 18px; margin: 5px; }
   </style>
 </head>
 <body>
   <h1>Лягушонок ловит подарки</h1>
+
+  <div id="menu">
+    <button onclick="startGame()">Играть</button>
+    <button onclick="fetchLeaderboardFromSupabase()">Топ игроков</button>
+  </div>
+
   <div id="scoreDisplay">Очки: 0</div>
-  <button id="startGame">Старт</button>
-  <canvas id="gameCanvas"></canvas>
-  <div class="controls">
+  <canvas id="gameCanvas" style="display:none;"></canvas>
+  <div class="controls" id="controls" style="display:none;">
     <img src="https://i.imgur.com/QUaEIk9.png" id="left" />
     <img src="https://i.imgur.com/05AB2sm.png" id="right" />
   </div>
@@ -53,25 +59,34 @@
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
   canvas.width = 400; canvas.height = 500;
+
+  const frogImg = new Image(); frogImg.src = "https://i.imgur.com/eLpERcH.png";
+  const giftImg = new Image(); giftImg.src = "https://i.imgur.com/KvLJceM.png";
+  const badGiftImg = new Image(); badGiftImg.src = "https://i.imgur.com/Z7RXVbr.png";
+
   let gameRunning = false, frogX = 155, frogY = 400, score = 0;
   const frogWidth = 50, frogHeight = 70;
   const gifts = [], giftSpeedBase = 2, giftPositions = [0, 50, 100, 150, 200, 250, 300, 350];
   let giftSpeed = giftSpeedBase, spawnInterval = 2000, lives = 3, spawnTimer;
 
-  document.getElementById("startGame").onclick = () => {
-    score = 0; lives = 3; gifts.length = 0; gameRunning = true;
-    updateScoreDisplay(); this.style.display = 'none';
-    startSpawning();
-  };
-
   document.getElementById("left").onclick = () => frogX = Math.max(frogX - 50, 0);
   document.getElementById("right").onclick = () => frogX = Math.min(frogX + 50, canvas.width - frogWidth);
 
-  function drawFrog() { ctx.fillStyle = 'green'; ctx.fillRect(frogX, frogY, frogWidth, frogHeight); }
+  function startGame() {
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("leaderboard").innerHTML = "";
+    document.getElementById("gameCanvas").style.display = "block";
+    document.getElementById("controls").style.display = "flex";
+    score = 0; lives = 3; gifts.length = 0; gameRunning = true;
+    updateScoreDisplay();
+    startSpawning();
+  }
+
+  function drawFrog() { ctx.drawImage(frogImg, frogX, frogY, frogWidth, frogHeight); }
   function drawGifts() {
     gifts.forEach((g, i) => {
-      ctx.fillStyle = g.bad ? 'black' : 'red';
-      ctx.fillRect(g.x, g.y, 30, 30);
+      const img = g.bad ? badGiftImg : giftImg;
+      ctx.drawImage(img, g.x, g.y, 30, 30);
       g.y += giftSpeed;
       if (g.y + 30 > frogY && Math.abs((g.x + 15) - (frogX + frogWidth / 2)) < 30) {
         if (g.bad) loseLife(); else score++;
@@ -91,7 +106,7 @@
       clearInterval(spawnTimer);
       saveScoreToSupabase(score);
       alert("Игра окончена! Ваш счёт: " + score);
-      document.getElementById("startGame").style.display = 'block';
+      returnToMenu();
     }
   }
 
@@ -103,6 +118,12 @@
     }, spawnInterval);
   }
 
+  function returnToMenu() {
+    document.getElementById("gameCanvas").style.display = "none";
+    document.getElementById("controls").style.display = "none";
+    document.getElementById("menu").style.display = "block";
+  }
+
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (gameRunning) { drawFrog(); drawGifts(); }
@@ -110,7 +131,6 @@
   }
 
   gameLoop();
-  fetchLeaderboardFromSupabase();
 
   async function saveScoreToSupabase(score) {
     await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
@@ -135,6 +155,9 @@
   }
 
   function renderLeaderboard(data) {
+    document.getElementById("menu").style.display = "block";
+    document.getElementById("gameCanvas").style.display = "none";
+    document.getElementById("controls").style.display = "none";
     const container = document.getElementById("leaderboard");
     container.innerHTML = '<h3>Топ игроков</h3>';
     const table = document.createElement("table");
