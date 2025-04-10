@@ -6,8 +6,8 @@ export default function initGame(user) {
     <button id="leaderboardBtn">Топ игроков</button>
     <button id="backToMenuBtn">← Назад</button>
     <div id="info" style="margin-top: 10px;">
-      <div id="livesDisplay" style="display:none;">Жизни: ❤️❤️❤️</div>
-      <div id="scoreDisplay" style="display:none;">Очки: 0</div>
+      <div id="livesDisplay" style="display:none; color:black;">Жизни: ❤️❤️❤️</div>
+      <div id="scoreDisplay" style="display:none; color:black;">Очки: 0</div>
     </div>
     <canvas id="gameCanvas" width="400" height="500" style="display:none;"></canvas>
     <div class="controls" style="display:none;">
