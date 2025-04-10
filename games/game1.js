@@ -148,7 +148,7 @@ export default function initGame(user) {
     container.innerHTML = '<h3>Топ игроков</h3>';
     const table = document.createElement("table");
     table.innerHTML = `<tr><th>Имя</th><th>Очки</th></tr>` +
-      data.map(r => `<tr><td>${r.username}</td><td>${r.score}</td></tr>`).join('');
+    data.slice(0, 5).map(r => `<tr><td>${r.username}</td><td>${r.score}</td></tr>`).join('');
     container.appendChild(table);
   }
 
