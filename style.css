@@ -105,7 +105,12 @@ th, td {
     width: 50px;
     height: 50px;
   }
-
+#livesDisplay,
+#scoreDisplay {
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+}
   #info {
     font-size: 18px;
   }
