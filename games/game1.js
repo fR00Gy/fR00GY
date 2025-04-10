@@ -1,21 +1,22 @@
 export default function initGame(user) {
   const game = document.getElementById('game');
-  game.innerHTML = `
-    <div id="gameUI">
-      <button id="startBtn">Играть</button>
-      <button id="leaderboardBtn">Топ игроков</button>
-      <div id="info" style="margin-top: 10px;">
-        <div id="livesDisplay" style="display:none;">Жизни: ❤️❤️❤️</div>
-        <div id="scoreDisplay" style="display:none;">Очки: 0</div>
-      </div>
-      <canvas id="gameCanvas" width="400" height="500" style="display:none;"></canvas>
-      <div class="controls" style="display:none;">
-        <img src="https://i.imgur.com/QUaEIk9.png" id="left" />
-        <img src="https://i.imgur.com/05AB2sm.png" id="right" />
-      </div>
-      <div id="leaderboard" style="display:none; margin-top: 20px;"></div>
+ game.innerHTML = `
+  <div id="gameUI">
+    <button id="startBtn">Играть</button>
+    <button id="leaderboardBtn">Топ игроков</button>
+    <button id="backToMenuBtn">← Назад</button>
+    <div id="info" style="margin-top: 10px;">
+      <div id="livesDisplay" style="display:none;">Жизни: ❤️❤️❤️</div>
+      <div id="scoreDisplay" style="display:none;">Очки: 0</div>
     </div>
-  `;
+    <canvas id="gameCanvas" width="400" height="500" style="display:none;"></canvas>
+    <div class="controls" style="display:none;">
+      <img src="https://i.imgur.com/QUaEIk9.png" id="left" />
+      <img src="https://i.imgur.com/05AB2sm.png" id="right" />
+    </div>
+    <div id="leaderboard" style="display:none; margin-top: 20px;"></div>
+  </div>
+`;
 
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
@@ -156,6 +157,11 @@ export default function initGame(user) {
   document.getElementById("right").onclick = () => frogX = Math.min(frogX + 50, canvas.width - frogWidth);
   document.getElementById("startBtn").onclick = startGame;
   document.getElementById("leaderboardBtn").onclick = fetchLeaderboard;
+  document.getElementById("backToMenuBtn").onclick = () => {
+  document.getElementById("game").style.display = "none";
+  document.getElementById("menu").style.display = "block";
+  document.getElementById("game").innerHTML = "";
+};
 
   gameLoop();
 }
