@@ -7,9 +7,13 @@ body {
   text-align: center;
   color: white;
 }
-h1, h2, h3, p, label {
+
+h1, h2 label {
   color: white;
   -webkit-text-stroke: 1px black;
+}
+h3, p, label {
+  color: black;
 }
 input {
   padding: 10px;
