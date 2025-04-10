@@ -107,9 +107,13 @@ th, td {
   }
 #livesDisplay,
 #scoreDisplay {
-  color: black;
+  color: black !important;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 5px 10px;
+  border-radius: 10px;
+  display: inline-block;
   font-weight: bold;
-  font-size: 18px;
+}
 }
   #info {
     font-size: 18px;
