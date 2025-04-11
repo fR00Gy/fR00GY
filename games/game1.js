@@ -116,8 +116,21 @@ export default function initGame(user) {
     }, spawnInterval);
   }
 
-  function saveScore() {
-    fetch(`${SUPABASE_URL}/rest/v1/scores`, {
+  async function saveScore() {
+  const { name: username, id: user_id } = user;
+
+  // 1. Получаем текущую запись (если есть)
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/scores?username=eq.${username}`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  const data = await res.json();
+
+  // 2. Если записи нет — создаём новую
+  if (data.length === 0) {
+    await fetch(`${SUPABASE_URL}/rest/v1/scores`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
@@ -125,9 +138,25 @@ export default function initGame(user) {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ user_id: user.id, username: user.name, score })
-    }).then(fetchLeaderboard);
+      body: JSON.stringify({ user_id, username, score })
+    });
+  } else if (score > data[0].score) {
+    // 3. Если счёт больше предыдущего — обновляем
+    const id = data[0].id;
+    await fetch(`${SUPABASE_URL}/rest/v1/scores?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ score })
+    });
   }
+
+  // 4. Показываем таблицу лидеров
+  fetchLeaderboard();
+}
 
   function fetchLeaderboard() {
     document.getElementById("gameCanvas").style.display = "none";
